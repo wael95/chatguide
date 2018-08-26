@@ -6,39 +6,64 @@ import {View, Text, StyleSheet, TextInput, FlatList,
 import {connect} from 'react-redux';
 
 
+import firebase  from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
+
 class chatpage extends React.Component {
 
   constructor(props){
     super(props);
     this.props.navigation.setParams({ title: 'your content' });
     this.renderChatItem = this.renderChatItem.bind(this);
+    this.fetchmessages = this.fetchmessages.bind(this);
     console.log(this.props.navigation.state.params.pagename);
     this.state = {
-            text: '',
+            messages: [ ],
             disabled: false
         };
   };
+  componentDidMount(){
+    this.fetchmessages();
+  }
   onSendBtnPressed () {
       this.textInput.clear();
       Keyboard.dismiss();
   };
   renderChatItem =({item})=> {
       return   <View >
+                {this.props.user.username!==item.sender ?
                 <View style={styles.elsemessage}>
-                  <Text style={styles.message}>mazen: </Text>
-                  <Text style={styles.message}>Hey big guy </Text>
+                  <Text style={styles.message}>{item.sender} </Text>
+                  <Text style={styles.message}>{item.text} </Text>
                 </View>
+                :
                 <View style={styles.mymessage}>
-                  <Text style={styles.message}>lalla america </Text>
-                </View>
+                  <Text style={styles.message}>{item.text}</Text>
+                </View>}
                 </View>;
   };
+  fetchmessages(){
+     firebase.database().ref('messages/'+this.props.navigation.state.params.pagename).on('value',(snapshot)=>{
+        const M = [];
+        if(snapshot.val())
+        Object.values(snapshot.val()).forEach(msg =>{
+          M.unshift(msg);
+        });
+        this.setState({messages : M});
+      });
+  };
+  _keyExtractor = (item, index) => item.id;
   render() {
+
     return (
     <View style={styles.container}>
     <FlatList
-      data={[{key: 'a'}]}
+      inverted
+      data={this.state.messages}
       renderItem={({item}) => this.renderChatItem({item})}
+      keyExtractor={this._keyExtractor}
+      extraData={this.state}
     />
       <KeyboardAvoidingView
             keyboardVerticalOffset={Platform.select({ios: 60, android:60})}
@@ -104,7 +129,7 @@ const styles = StyleSheet.create({
       padding:9,
       backgroundColor:'#03ff96',
       justifyContent:'center',
-      alignItems:'flex-end',
+      // alignItems:'flex-end',
     },
     elsemessage: {
       margin:7,marginRight:'30%',
