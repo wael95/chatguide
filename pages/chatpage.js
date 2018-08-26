@@ -10,39 +10,40 @@ class chatpage extends React.Component {
 
   constructor(props){
     super(props);
-    this.props.navigation.setParams({ title: 'your content' })
+    this.props.navigation.setParams({ title: 'your content' });
+    this.renderChatItem = this.renderChatItem.bind(this);
     console.log(this.props.navigation.state.params.pagename);
     this.state = {
             text: '',
             disabled: false
-        }
-  }
-
-
+        };
+  };
   onSendBtnPressed () {
       this.textInput.clear();
       Keyboard.dismiss();
-  }
-  renderChatItem({ item }) {
-      return <ChatItem message={item} />
-  }
-
-  keyExtractor = (item, index) => index;
-
-
+  };
+  renderChatItem =({item})=> {
+      return   <View >
+                <View style={styles.elsemessage}>
+                  <Text style={styles.message}>mazen: </Text>
+                  <Text style={styles.message}>Hey big guy </Text>
+                </View>
+                <View style={styles.mymessage}>
+                  <Text style={styles.message}>lalla america </Text>
+                </View>
+                </View>;
+  };
   render() {
     return (
     <View style={styles.container}>
-
-      <FlatList
-          inverted
-          data={this.props.messages}
-          renderItem={this.renderChatItem}
-          keyExtractor={this.keyExtractor}
-      />
-
-      <KeyboardAvoidingView keyboardVerticalOffset={Platform.select({ios: 30, android: 15})}
-            behavior= {(Platform.OS === 'ios')? "padding" : null}>
+    <FlatList
+      data={[{key: 'a'}]}
+      renderItem={({item}) => this.renderChatItem({item})}
+    />
+      <KeyboardAvoidingView
+            keyboardVerticalOffset={Platform.select({ios: 60, android:60})}
+            behavior= {(Platform.OS === 'ios')? "padding" : null}
+            >
           <View style={styles.inputBar}>
             <TextInput
                 style={styles.textBox}
@@ -59,7 +60,6 @@ class chatpage extends React.Component {
             </TouchableHighlight>
         </View>
       </KeyboardAvoidingView>
-
     </View>
     );
   }
@@ -70,10 +70,9 @@ const styles = StyleSheet.create({
     },
     inputBar: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         paddingHorizontal: 5,
         paddingVertical: 10,
-        backgroundColor: '#dadfea'
+        backgroundColor: '#dadfea',
     },
     textBox: {
         borderRadius: 5,
@@ -83,7 +82,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         flex: 1,
         paddingVertical: 5,
-        marginLeft: 5
+        marginLeft: 5,
+        backgroundColor: '#fff',
     },
     sendBtn: {
         justifyContent: 'center',
@@ -92,9 +92,29 @@ const styles = StyleSheet.create({
         paddingRight: 15,
         borderRadius: 5,
         marginLeft: 5,
-        backgroundColor: '#476DC5'
+        backgroundColor: '#476DC5',
     },
-  
+    message: {
+      fontSize:17,
+      color:'#0f0f0f',
+    },
+    mymessage: {
+      margin:7,marginLeft:'30%',
+      borderRadius:10,
+      padding:9,
+      backgroundColor:'#03ff96',
+      justifyContent:'center',
+      alignItems:'flex-end',
+    },
+    elsemessage: {
+      margin:7,marginRight:'30%',
+      borderRadius:10,
+      padding:9,
+      backgroundColor:'#fafbfc',
+      justifyContent:'center',
+      alignItems:'flex-start',
+    }
+
   });
 
 const mapstatetoprops= state => {
