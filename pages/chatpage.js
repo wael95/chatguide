@@ -4,7 +4,7 @@ import {View, Text, StyleSheet, TextInput, FlatList,
     TouchableHighlight, KeyboardAvoidingView } from 'react-native';
 
 import {connect} from 'react-redux';
-
+import {sendmessage} from '../redux/actions';
 
 import firebase  from 'firebase/app';
 import 'firebase/auth';
@@ -20,13 +20,17 @@ class chatpage extends React.Component {
     console.log(this.props.navigation.state.params.pagename);
     this.state = {
             messages: [ ],
-            disabled: false
+            disabled: false,
+            text:''
         };
   };
   componentDidMount(){
     this.fetchmessages();
   }
   onSendBtnPressed () {
+      if(this.state.text!='')
+      this.props.sendmessage(this.state.text,this.props.user.username,this.props.navigation.state.params.pagename);
+      this.setState({text:''});
       this.textInput.clear();
       Keyboard.dismiss();
   };
@@ -147,4 +151,4 @@ const mapstatetoprops= state => {
     user: state.auth.user,
   };
 };
-export default connect(mapstatetoprops,{})(chatpage);
+export default connect(mapstatetoprops,{sendmessage})(chatpage);
