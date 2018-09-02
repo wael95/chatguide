@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet, TextInput, FlatList,
     Platform, Keyboard,ActivityIndicator,
-    TouchableHighlight, KeyboardAvoidingView } from 'react-native';
+    TouchableHighlight,TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 
 import {connect} from 'react-redux';
 import {sendmessage} from '../redux/actions';
@@ -34,8 +34,13 @@ class chatpage extends React.Component {
       this.textInput.clear();
       Keyboard.dismiss();
   };
+
+messageTouched(){
+  // console.log('you touched a message');
+}
+
   renderChatItem =({item})=> {
-      return   <View >
+      return   <TouchableOpacity onPress={this.messageTouched}>
                 {this.props.user.username!==item.sender ?
                 <View style={styles.elsemessage}>
                   <Text style={styles.message}>{item.sender} </Text>
@@ -45,7 +50,7 @@ class chatpage extends React.Component {
                 <View style={styles.mymessage}>
                   <Text style={styles.message}>{item.text}</Text>
                 </View>}
-                </View>;
+                </TouchableOpacity>;
   };
   fetchmessages(){
      firebase.database().ref('messages/'+this.props.navigation.state.params.pagename).on('value',(snapshot)=>{
@@ -70,7 +75,7 @@ class chatpage extends React.Component {
       extraData={this.state}
     />
       <KeyboardAvoidingView
-            keyboardVerticalOffset={Platform.select({ios: 60, android:60})}
+            keyboardVerticalOffset={Platform.select({ios: 60, android:500})}
             behavior= {(Platform.OS === 'ios')? "padding" : null}
             >
           <View style={styles.inputBar}>
